@@ -231,6 +231,8 @@ REDIS_PORT=6379
 
 #### Email Service
 MAIL_USERNAME=your_email@gmail.com
+
+
 MAIL_PASSWORD=your_gmail_app_password
 
 ---
