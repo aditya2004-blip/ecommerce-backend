@@ -1,0 +1,38 @@
+# --- Security & Environment ---
+.env
+application-local.properties
+
+# --- Build & Output ---
+target/
+!.active_profiles
+bin/
+*.log
+
+# --- Maven ---
+.mvn/
+mvnw
+mvnw.cmd
+.mvn/wrapper/maven-wrapper.jar
+
+# --- STS / Eclipse ---
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+
+# --- IntelliJ IDEA ---
+.idea
+*.iws
+*.iml
+*.ipr
+out/
+
+# --- VS Code ---
+.vscode/
+
+# --- OS Generated ---
+.DS_Store
+Thumbs.db
