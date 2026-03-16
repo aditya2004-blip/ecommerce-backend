@@ -1,4 +1,4 @@
-# E-Commerce Backend System
+<img width="1057" height="276" alt="Docker" src="https://github.com/user-attachments/assets/1951126e-ee52-4261-b8b4-813e5f6316e4" /># E-Commerce Backend System
 
 ## Project Overview
 This project is a production-grade, highly scalable RESTful backend system for an e-commerce platform. It manages the complete online shopping lifecycle, including user authentication, product catalog management, shopping cart operations, order processing, and simulated payment handling.
@@ -1011,3 +1011,6 @@ Navigate to the **project root directory** and run the following command:
 
 ```bash
 docker-compose up -d
+
+<img width="1057" height="276" alt="Docker" src="https://github.com/user-attachments/assets/90ac7929-09d2-4b8b-945c-b601643e2faf" />
+
