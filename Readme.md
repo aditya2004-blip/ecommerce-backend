@@ -51,7 +51,7 @@ ecommerce-backend/
 ├── logs/                        # Application runtime logs
 ├── target/                      # Compiled files and build artifacts
 ├── pom.xml                      # Maven dependencies
-└── README.md                    # Project documentation                  # Project documentation
+└── README.md                    # Project documentation                 
 ```
 
 ---
