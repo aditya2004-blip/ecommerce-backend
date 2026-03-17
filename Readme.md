@@ -1014,5 +1014,6 @@ Navigate to the **project root directory** and run the following command:
 docker-compose up -d
 ```
 
-<img width="1057" height="276" alt="Docker" src="https://github.com/user-attachments/assets/90ac7929-09d2-4b8b-945c-b601643e2faf" />
+<img width="1057" height="276" alt="Docker" src=["https://github.com/user-attachments/assets/90ac7929-09d2-4b8b-945c-b601643e2faf"](https://github.com/aditya2004-blip/ecommerce-backend/blob/main/images/Docker.png) />
+<img width="1057" height="276" alt="Docker" src="" />
 
