@@ -1,4 +1,6 @@
 
+# E-Commerce Backend System
+
 ## Project Overview
 This project is a production-grade, highly scalable RESTful backend system for an e-commerce platform. It manages the complete online shopping lifecycle, including user authentication, product catalog management, shopping cart operations, order processing, and simulated payment handling.
 
@@ -11,19 +13,18 @@ Built with **Java 17** and **Spring Boot 4.0.3**, the system adheres to an indus
 - [Project Overview](#project-overview)
 - [Folder Structure](#folder-structure)
 - [Technologies and Libraries Used](#technologies-and-libraries-used)
-- [How to Execute the Project Locally](#how-to-execute-the-project-locally)
-- [Running the Application](#running-the-application)
 - [Application Architecture (Spring MVC)](#application-architecture-spring-mvc)
 - [Database Schema](#database-schema)
 - [Entity Relationship Diagram (ERD)](#entity-relationship-diagram-erd)
 - [API Documentation](#api-documentation)
-- [API Documentation & Testing Guide](#api-documentation-testing-guide)
-- [Testing the API (Using Postman)](#testing-the-api-using-postman)
-- [Additional Features & Optimizations](#additional-features-optimizations)
+- [API Documentation & Testing Guide](#api-documentation--testing-guide)
+- [Additional Features & Optimizations](#additional-features--optimizations)
 - [Global Exception Handling (@RestControllerAdvice)](#global-exception-handling-restcontrolleradvice)
-- [Testing & Code Coverage](#testing-code-coverage)
+- [Testing the API (Using Postman)](#testing-the-api-using-postman)
+- [Testing & Code Coverage](#testing--code-coverage)
+- [Docker Execution (Containerized)](#docker-execution-containerized)
 
-## 📂 Folder Structure
+## Folder Structure
 
 The project follows a clean, layered architectural pattern, separating concerns for maintainability and scalability. It also includes comprehensive testing and reporting directories.
 
@@ -51,30 +52,30 @@ ecommerce-backend/
 ├── logs/                        # Application runtime logs
 ├── target/                      # Compiled files and build artifacts
 ├── pom.xml                      # Maven dependencies
-└── README.md                    # Project documentation                 
+└── README.md                    # Project documentation                  # Project documentation
 ```
 
 ---
 
 ## Technologies and Libraries Used
-```text
 
-| Component        | Technology                     | Version       | Purpose |
-|------------------|--------------------------------|---------------|---------|
-| Language         | Java                           | 17+           | Core programming language providing modern features and long-term support |
-| Framework        | Spring Boot                    | 3.2.x         | Rapid development framework used to build RESTful backend APIs |
-| ORM              | Spring Data JPA / Hibernate    | 3.x           | Object-Relational Mapping for seamless interaction with the database |
-| Database         | MySQL                          | 8.x           | Primary relational database for persistent transactional data storage |
-| Caching          | Redis                          | 7.x           | In-memory data store used for fast inventory checks and caching |
-| Security         | Spring Security & JWT          | 6.x / 0.11.5  | Role-Based Access Control and stateless authentication using tokens |
-| Object Mapping   | ModelMapper                    | 3.1.1         | Converts entities to DTOs and simplifies API responses |
-| Async Processing | Spring Boot Mail               | 3.x           | Sends order confirmation emails asynchronously |
-| Testing          | JUnit 5 & Mockito              | 5.x           | Used for unit testing and mocking dependencies |
-| Test Coverage    | JaCoCo                         | 0.8.x         | Generates detailed test coverage reports |
-| Logging          | SLF4J / Logback                | N/A           | Standardized application logging for debugging and monitoring |
-| API Documentation| Swagger UI (OpenAPI)           | 2.7.0          | Interactive API documentation and testing interface |
-
-```
+| Component          | Technology                     | Version       | Purpose                                                                 |
+|--------------------|--------------------------------|---------------|-------------------------------------------------------------------------|
+| Language           | Java                           | 17+           | Core programming language providing modern features and long-term support |
+| Framework          | Spring Boot                    | 4.0.3         | Rapid development framework used to build RESTful backend APIs         |
+| ORM                | Spring Data JPA / Hibernate    | 3.x           | Object-Relational Mapping for seamless interaction with the database   |
+| Database           | MySQL                          | 8.x           | Primary relational database for persistent transactional data storage   |
+| Containerization   | Docker                         | latest        | Containerization for deployment and environment consistency            |
+| Caching            | Redis                          | 7.x           | In-memory data store used for fast inventory checks and caching         |
+| Security           | Spring Security & JWT          | 6.x / 0.11.5  | Role-Based Access Control and stateless authentication using tokens     |
+| Object Mapping     | ModelMapper                    | 3.2.0         | Converts entities to DTOs and simplifies API responses                 |
+| Async Processing   | Spring Boot Mail               | 3.x           | Sends order confirmation emails asynchronously                          |
+| Testing            | JUnit 5 & Mockito              | 5.x           | Used for unit testing and mocking dependencies                          |
+| Test Coverage      | JaCoCo                         | 0.8.11        | Generates detailed test coverage reports                                |
+| Logging            | SLF4J / Logback                | N/A           | Standardized application logging for debugging and monitoring           |
+| API Documentation  | Swagger UI (OpenAPI)           | 2.7.0         | Interactive API documentation and testing interface                     |
+| Environment Config | dotenv-java                    | 3.0.0         | Loading environment variables from .env files                           |
+| Validation         | Spring Boot Validation         | 3.x           | Bean validation for input data and constraints                         |
 ---
 
 # How to Execute the Project Locally
@@ -231,8 +232,6 @@ REDIS_PORT=6379
 
 #### Email Service
 MAIL_USERNAME=your_email@gmail.com
-
-
 MAIL_PASSWORD=your_gmail_app_password
 
 ---
@@ -245,150 +244,141 @@ This project follows the **Spring MVC layered architecture**, which separates re
   <img src="images/architecture.png" width="750">
 </p>
 
-# Application Architecture Flow
+# Detailed Application Architecture Flow
 
-The system follows a layered architecture based on the **Spring MVC pattern**, ensuring clear separation of concerns between request handling, business logic, and data persistence.
+The system follows a strictly decoupled, N-tier architecture. Each layer communicates only with the layer immediately below it, ensuring that a change in the Database does not break the Controller.
 
----
+## 1. Security & Filter Layer (The Gatekeeper)
 
-## 1. Client / API Testing Tool (Postman)
+**Primary Responsibility: Identity & Permission**
 
-**Role:**  
-The entry point of the request lifecycle.
+Intercepts every incoming request before it reaches the application code.
 
-**Responsibilities**
+**Key Responsibilities:**
 
-- Acts as the consumer of the RESTful services.
-- Initiates communication by sending HTTP requests:
-  - `GET`
-  - `POST`
-  - `PUT`
-  - `DELETE`
-- Requests contain:
-  - JSON payloads
-  - HTTP headers (such as **JWT Bearer Token**)
+- Authenticates the user (Who are you?) by validating the JWT signature.
+- Authorizes the user (What can you do?) by checking roles like ADMIN or CUSTOMER.
+- Blocks invalid or malicious requests immediately to save system resources.
 
-**Components**
+**Components:**
 
-- Front-end web applications
-- Mobile applications
-- API testing tools such as **Postman** and **Insomnia**
+- **JwtAuthenticationFilter.java**: This is a OncePerRequestFilter. It intercepts every incoming HTTP call, looks for the `Authorization: Bearer <token>` header, and validates the signature.
+
+- **JwtUtil.java**: A utility class used by the filter to parse the claims, check the expiration date, and extract the username and role (ADMIN/CUSTOMER) from the encrypted string.
+
+- **WebSecurityConfig.java**: The "Command Center" for security. It defines which URLs are public (like `/api/products/**`) and which require specific roles (like `/api/orders/**` for Customers).
 
 ---
 
-## 2. Controller Layer (Presentation Layer)
+## 2. Controller Layer (The Receptionist)
 
-**Role:**  
-Acts as the interface between external clients and the application's internal logic.
+**Primary Responsibility: Communication & Routing**
 
-**Responsibilities**
+Exposes the API endpoints (URLs) to the outside world.
 
-- Exposes REST endpoints using `@RestController`
-- Maps endpoints using `@RequestMapping`
-- Handles request parameters using:
-  - `@PathVariable`
-  - `@RequestParam`
-  - `@RequestBody`
-- Performs validation using `@Valid`
-- Returns appropriate HTTP response codes such as:
-  - `200 OK`
-  - `201 Created`
-  - `404 Not Found`
+**Key Responsibilities:**
 
-**Components**
+- Parses incoming data from JSON or URL parameters into Java objects.
+- Validates the basic format of the input (e.g., "Is the email field actually an email?").
+- Returns the final HTTP response (e.g., 200 OK, 201 Created, or 404 Not Found).
 
-- `ProductController`
-- `AuthController`
-- `OrderController`
-- `UserController`
-- `CartController`
+**Components:**
+
+- **AuthController.java**: Specifically handles `/register` and `/login`. It converts a LoginRequest into a JwtResponse.
+
+- **ProductController.java / CartController.java**: These files use `@RestController` and `@RequestMapping`. They handle data binding—taking path variables (like `{id}`) and request bodies—and passing them down.
+
+- **GlobalExceptionHandler.java**: Uses `@RestControllerAdvice`. If any file in any layer throws an error, this file "catches" it and turns a messy Java stack trace into a clean JSON error message for the user.
 
 ---
 
-## 3. DTO Layer (Data Transfer Objects)
+## 3. Service Layer (The Brain)
 
-**Role:**  
-Acts as a secure data wrapper for communication between layers.
+**Primary Responsibility: Business Logic & Orchestration**
 
-**Responsibilities**
+Coordinates between different repositories and external tools (Redis, Email).
 
-- Decouples the API contract from the internal database schema.
-- Prevents exposure of sensitive data such as hashed passwords.
-- Aggregates data from multiple entities into simplified JSON responses.
+**Key Responsibilities:**
 
-**Components**
+- Enforces business rules (e.g., "A user cannot checkout if the item is out of stock").
+- Manages Transactions: Ensures that a group of actions (like deducting money and reducing stock) either all succeed together or all fail together (ACID compliance).
+- Optimizes performance by using caching (Redis) and background tasks (Async Email).
 
-- `UserDto`
-- `ProductDto`
-- `OrderDto`
-- `CartDto`
-- `LoginDto`
+**Components:**
 
----
+- **ProductServiceImpl.java**: Contains logic for pagination and sorting. It ensures that when a user searches for products, the data is fetched efficiently.
 
-## 4. Service Layer (Business Logic Layer)
+- **OrderServiceImpl.java**: Handles complex Transactions. It ensures that if the database fails while saving an order, the product stock is "rolled back" so you don't lose inventory data.
 
-**Role:**  
-The core processing engine of the application.
+- **RedisInventoryServiceImpl.java**: A specialized service that talks to Redis. It performs "Atomic Increments/Decrements" on stock counts, which is much faster than standard SQL for high-speed inventory updates.
 
-**Responsibilities**
-
-- Implements business logic such as:
-  - Inventory deduction
-  - Cart total calculations
-  - Role-based access checks
-- Manages transactions using `@Transactional`
-- Coordinates interactions between repositories and external services
-- Integrates additional services such as:
-  - Redis for caching inventory
-  - SMTP for email notifications
-
-**Components**
-
-- `AuthServiceImpl`
-- `ProductServiceImpl`
-- `CartServiceImpl`
-- `OrderServiceImpl`
-- `RedisInventoryServiceImpl`
+- **EmailServiceImpl.java**: Uses the `@Async` annotation. This allows the app to send an email without making the user wait for the "Order Successful" screen to load.
 
 ---
 
-## 5. Repository Layer (Persistence Layer / DAO)
+## 4. DTO & Mapper Layer (The Translator)
 
-**Role:**  
-Provides abstraction for all database operations.
+**Primary Responsibility: Data Privacy & Decoupling**
 
-**Responsibilities**
+Filters sensitive information so it never leaves the server.
 
-- Implements CRUD operations using **Spring Data JPA**
-- Defines derived queries such as:
-  - `findByEmail`
-- Communicates with the database using **Hibernate ORM**
+**Key Responsibilities:**
 
-**Components**
+- Filters sensitive information so it never leaves the server (e.g., hiding password hashes).
+- Shapes the data to match what the frontend needs, regardless of how the database looks.
+- Decouples the API contract from the database schema so you can change your tables without breaking the mobile app.
 
-- `UserRepository`
-- `ProductRepository`
-- `CartRepository`
-- `OrderRepository`
+**Components:**
+
+- **ProductDto.java / UserDto.java**: These are simple POJOs (Plain Old Java Objects). They contain only the fields you want the user to see.
+
+- **ModelMapperConfig.java**: Configures the library that automatically copies data from an Entity (with 20 fields) into a Dto (with only 5 fields).
 
 ---
 
-## 6. Database Layer
+## 5. Repository Layer (The Librarian)
 
-**Role:**  
-Persistent storage layer for application data.
+**Primary Responsibility: Data Access & Abstraction**
 
-**Responsibilities**
+Abstracts the complexity of SQL.
 
-- Stores relational data with referential integrity
-- Maintains relationships using **Foreign Keys**
-- Ensures safe concurrent updates using **Optimistic Locking (`@Version`)**
+**Key Responsibilities:**
 
-**Components**
+- Abstracts the complexity of SQL. You call a Java method, and it handles the database "talk."
+- Executes CRUD (Create, Read, Update, Delete) operations.
+- Filters data at the database level using specific queries (e.g., "Find all products where price < 500").
 
-- **MySQL 8.x Database**
-- **Hibernate ORM**
+**Components:**
+
+- **ProductRepository.java / UserRepository.java**: These are interfaces extending JpaRepository. You don't write SQL here; Spring Data JPA generates the SQL for you automatically at runtime.
+
+---
+
+## 6. Entity Layer (The Blueprint)
+
+**Primary Responsibility: Data Structure & Integrity**
+
+Defines exactly what a "User" or "Product" looks like in the database.
+
+**Key Responsibilities:**
+
+- Defines exactly what a "User" or "Product" looks like in the database.
+- Enforces data rules at the source (e.g., "Email must be unique," "Stock cannot be null").
+- Handles Concurrency: Uses versioning to ensure two people don't update the same data at the exact same time (Optimistic Locking).
+
+**Components:**
+
+- **Product.java / Order.java (Entities)**: These define your MySQL tables. They use `@Version` for Optimistic Locking, which prevents two people from buying the last item at the exact same millisecond.
+
+---
+
+## 6. External Infrastructure (Dockerized)
+
+- **MySQL 8.x**: Persistent storage for all relational data (Users, Orders, Transactions).
+
+- **Redis 7.x**: High-speed cache for keeping track of live inventory stock to reduce MySQL load.
+
+- **phpMyAdmin**: A graphical interface to help you manually verify that the data was saved correctly during testing.
 
 
 
@@ -1013,6 +1003,5 @@ Navigate to the **project root directory** and run the following command:
 ```bash
 docker-compose up -d
 ```
-
 <img width="1057" height="276" alt="Docker" src="https://github.com/aditya2004-blip/ecommerce-backend/blob/main/images/Docker.png" />
 
